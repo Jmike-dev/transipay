@@ -1,4 +1,4 @@
-package java.lab.transipay
+package lab.transipay
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
