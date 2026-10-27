@@ -2,6 +2,8 @@ package lab.transipay.staff
 
 import lab.transipay.common.exception.ConflictException
 import lab.transipay.common.exception.NotFoundException
+import lab.transipay.company.CompanyEntity
+import lab.transipay.company.CompanyRepository
 import lab.transipay.staff.dto.StaffRequest
 import lab.transipay.staff.dto.StaffResponse
 import lab.transipay.staff.dto.toResponse
@@ -11,7 +13,10 @@ import java.util.UUID
 
 @Service
 @Transactional
-class StaffService(private val repository: StaffRepository) {
+class StaffService(
+    private val repository: StaffRepository,
+    private val companyRepository: CompanyRepository,
+) {
 
     fun create(req: StaffRequest): StaffResponse {
         if (repository.existsByEmail(req.email))
@@ -24,15 +29,17 @@ class StaffService(private val repository: StaffRepository) {
             phone = req.phone,
             role = req.role,
             active = req.active,
+            company = getCompanyOrThrow(req.companyId),
         )
         return repository.save(staff).toResponse()
     }
 
     @Transactional(readOnly = true)
-    fun findAll(): List<StaffResponse> = repository.findAll().map { it.toResponse() }
+    fun findAll(companyId: UUID? = null): List<StaffResponse> =
+        (if (companyId != null) repository.findAllByCompanyId(companyId) else repository.findAll())
+            .map { it.toResponse() }
 
-    @Transactional(readOnly = true)
-    fun findOne(id: UUID): StaffResponse = getOrThrow(id).toResponse()
+    // findOne and delete stay the same
 
     fun update(id: UUID, req: StaffRequest): StaffResponse {
         val staff = getOrThrow(id)
@@ -46,13 +53,15 @@ class StaffService(private val repository: StaffRepository) {
             phone = req.phone
             role = req.role
             active = req.active
+            company = getCompanyOrThrow(req.companyId)
         }
-        return staff.toResponse() // dirty checking saves automatically on commit
+        return staff.toResponse()
     }
+    @Transactional(readOnly = true)
+    fun findOne(id: UUID): StaffResponse = getOrThrow(id).toResponse()
 
-    fun delete(id: UUID) {
-        repository.delete(getOrThrow(id))
-    }
+    private fun getCompanyOrThrow(id: UUID): CompanyEntity =
+        companyRepository.findById(id).orElseThrow { NotFoundException("Company $id not found") }
 
     private fun getOrThrow(id: UUID): StaffEntity =
         repository.findById(id).orElseThrow { NotFoundException("Staff $id not found") }

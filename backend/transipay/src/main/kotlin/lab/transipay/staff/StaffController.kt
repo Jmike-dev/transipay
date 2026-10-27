@@ -31,9 +31,9 @@ class StaffController(private val service: StaffService) {
     @Operation(summary = "Update a staff member")
     fun update(@PathVariable id: UUID, @Valid @RequestBody req: StaffRequest): StaffResponse =
         service.update(id, req)
-
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Delete a staff member")
-    fun delete(@PathVariable id: UUID) = service.delete(id)
+//
+//    @DeleteMapping("/{id}")
+//    @ResponseStatus(HttpStatus.NO_CONTENT)
+//    @Operation(summary = "Delete a staff member")
+//    fun delete(@PathVariable id: UUID) = service.delete(id)
 }

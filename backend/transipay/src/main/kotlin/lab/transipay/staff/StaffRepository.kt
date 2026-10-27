@@ -6,4 +6,6 @@ import java.util.UUID
 interface StaffRepository : JpaRepository<StaffEntity, UUID> {
     fun existsByEmail(email: String): Boolean
     fun existsByEmailAndIdNot(email: String, id: UUID): Boolean
+    fun findAllByCompanyId(companyId: UUID): List<StaffEntity>
+    fun existsByCompanyId(companyId: UUID): Boolean
 }

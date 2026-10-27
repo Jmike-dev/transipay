@@ -1,6 +1,7 @@
 package lab.transipay.staff
 
 import jakarta.persistence.*
+import lab.transipay.company.CompanyEntity
 import java.time.Instant
 import java.util.UUID
 
@@ -10,6 +11,10 @@ class StaffEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     var id: UUID? = null,
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "company_id", nullable = false)
+    var company: CompanyEntity,
 
     @Column(name = "first_name", nullable = false)
     var firstName: String,

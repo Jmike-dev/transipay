@@ -3,12 +3,22 @@ package lab.transipay.staff.dto
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
 import lab.transipay.staff.StaffEntity
 import java.time.Instant
 import java.util.UUID
 
 data class StaffRequest(
+
+
+    @field:NotNull
+    @field:Schema(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6")
+    val companyId: UUID,
+
+//    val active: Boolean = true,
+
+
     @field:NotBlank @field:Size(max = 100)
     @field:Schema(example = "Jane")
     val firstName: String,
@@ -30,10 +40,13 @@ data class StaffRequest(
     val role: String,
 
     val active: Boolean = true,
+
+
 )
 
 data class StaffResponse(
     val id: UUID,
+    val companyId: UUID,
     val firstName: String,
     val lastName: String,
     val email: String,
@@ -46,6 +59,7 @@ data class StaffResponse(
 
 fun StaffEntity.toResponse() = StaffResponse(
     id = id!!,
+    companyId = company.id!!,
     firstName = firstName,
     lastName = lastName,
     email = email,
