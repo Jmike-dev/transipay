@@ -7,7 +7,9 @@ import lab.transipay.fees.dto.UpdateFeeRequest
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import java.util.UUID
+import io.swagger.v3.oas.annotations.tags.Tag
 
+@Tag(name = "Fees", description = "Create, update and manage fees")
 @RestController
 @RequestMapping("/api/fees")
 class FeesController(
@@ -36,10 +38,10 @@ class FeesController(
         @PathVariable id: UUID,
         @Valid @RequestBody request: UpdateFeeRequest,
     ): FeeResponse = feesService.update(id, request)
-
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun delete(@PathVariable id: UUID) {
-        feesService.delete(id)
-    }
+//
+//    @DeleteMapping("/{id}")
+//    @ResponseStatus(HttpStatus.NO_CONTENT)
+//    fun delete(@PathVariable id: UUID) {
+//        feesService.delete(id)
+//    }
 }
