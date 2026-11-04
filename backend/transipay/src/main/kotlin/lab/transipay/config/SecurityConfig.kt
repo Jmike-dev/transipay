@@ -2,6 +2,7 @@ package lab.transipay.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer
@@ -17,9 +18,15 @@ class SecurityConfig {
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .csrf { it.disable() }
-            .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-            .authorizeHttpRequests {
-                it.requestMatchers("/auth/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+            .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }.authorizeHttpRequests {
+                it
+                    // public: auth + docs
+                    .requestMatchers("/auth/**").permitAll()
+                    .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                    // public: specific routes, restricted by method
+                    .requestMatchers(HttpMethod.POST, "/api/mpesa/callback").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/companies").permitAll()
+                    // everything else needs a valid JWT
                     .anyRequest().authenticated()
             }
             .oauth2ResourceServer { rs -> rs.jwt { it.jwtAuthenticationConverter(converter()) } }
