@@ -8,4 +8,7 @@ interface StaffRepository : JpaRepository<StaffEntity, UUID> {
     fun existsByEmailAndIdNot(email: String, id: UUID): Boolean
     fun findAllByCompanyId(companyId: UUID): List<StaffEntity>
     fun existsByCompanyId(companyId: UUID): Boolean
+
+    fun findByGoogleSub(googleSub: String): StaffEntity?
+    fun findByEmail(email: String): StaffEntity?
 }

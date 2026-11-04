@@ -5,19 +5,15 @@ import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
+import lab.transipay.staff.Role
 import lab.transipay.staff.StaffEntity
 import java.time.Instant
 import java.util.UUID
 
 data class StaffRequest(
-
-
     @field:NotNull
     @field:Schema(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6")
     val companyId: UUID,
-
-//    val active: Boolean = true,
-
 
     @field:NotBlank @field:Size(max = 100)
     @field:Schema(example = "Jane")
@@ -35,13 +31,10 @@ data class StaffRequest(
     @field:Schema(example = "+254700000000")
     val phone: String? = null,
 
-    @field:NotBlank
-    @field:Schema(example = "ACCOUNTANT")
-    val role: String,
+    @field:Schema(example = "STAFF")
+    val role: Role = Role.STAFF,
 
     val active: Boolean = true,
-
-
 )
 
 data class StaffResponse(
@@ -51,7 +44,7 @@ data class StaffResponse(
     val lastName: String,
     val email: String,
     val phone: String?,
-    val role: String,
+    val role: Role,
     val active: Boolean,
     val createdAt: Instant,
     val updatedAt: Instant,
