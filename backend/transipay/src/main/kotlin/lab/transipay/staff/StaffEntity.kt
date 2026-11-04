@@ -27,8 +27,9 @@ class StaffEntity(
 
     var phone: String? = null,
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    var role: String,
+    var role: Role = Role.STAFF,
 
     @Column(nullable = false)
     var active: Boolean = true,
@@ -38,6 +39,9 @@ class StaffEntity(
 
     @Column(name = "updated_at", nullable = false)
     var updatedAt: Instant = Instant.now(),
+
+    @Column(name = "google_sub", unique = true)
+    var googleSub: String? = null,
 ) {
     @PreUpdate
     fun onUpdate() {
