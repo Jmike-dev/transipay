@@ -43,26 +43,25 @@ private val fleetOptions = listOf(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateCompanyScreen(
+    onCompanyCreated: (companyName: String) -> Unit = {},
     viewModel: CreateCompanyViewModel = viewModel()
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
     val focusManager = LocalFocusManager.current
     val colors = MaterialTheme.colorScheme
 
     // UI-only for now: the ViewModel/Company API doesn't take fleet size yet.
     var fleetIndex by rememberSaveable { mutableIntStateOf(0) }
 
-    // Show a success message when a company is created
+    // Once the company is created, hand off to the caller (navigates to Sign In)
     LaunchedEffect(viewModel.createdCompany) {
         viewModel.createdCompany?.let {
-            snackbarHostState.showSnackbar("${it.companyName} created successfully")
+            onCompanyCreated(it.companyName)
             viewModel.clearCreated()
         }
     }
 
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.background,
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         Column(
             modifier = Modifier
