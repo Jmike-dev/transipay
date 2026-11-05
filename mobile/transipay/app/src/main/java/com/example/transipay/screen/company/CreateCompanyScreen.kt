@@ -1,5 +1,6 @@
 package com.example.transipay.screen.company
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -23,12 +24,12 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.input.ImeAction
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.transipay.ui.theme.Orange500
 
@@ -53,8 +54,7 @@ fun CreateCompanyScreen(
     // UI-only for now: the ViewModel/Company API doesn't take fleet size yet.
     var fleetIndex by rememberSaveable { mutableIntStateOf(0) }
 
-    // Once the company is created, hand off to the caller (navigates to Sign In)
-
+    // Once the company is created, hand off to the caller (navigates to Sign Up)
     LaunchedEffect(viewModel.createdCompany) {
         viewModel.createdCompany?.let {
             onCompanyCreated(it.id, it.companyName)
@@ -215,10 +215,25 @@ fun CreateCompanyScreen(
                     onClick = viewModel::createCompany
                 )
 
+                Spacer(Modifier.height(12.dp))
+                OutlinedButton(
+                    onClick = onHaveAccount,
+                    enabled = !viewModel.isLoading,
+                    shape = RoundedCornerShape(50),
+                    border = BorderStroke(1.dp, colors.outline),
+                    modifier = Modifier.fillMaxWidth().height(52.dp)
+                ) {
+                    Text(
+                        "I already have an account · Log in",
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 15.sp
+                    )
+                }
+
                 Spacer(Modifier.height(14.dp))
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     Icon(Icons.Filled.Shield, null, tint = colors.primary, modifier = Modifier.size(14.dp))
-                    Text("Secure setup with Google or Magic Link", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = colors.secondary)
+                    Text("Secure sign-in with email or Google", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = colors.secondary)
                 }
 
                 Spacer(Modifier.height(16.dp))
@@ -373,7 +388,7 @@ private fun GradientButton(loading: Boolean, onClick: () -> Unit) {
                 )
             } else {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("Continue to Sign In", color = colors.onPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text("Continue to Create Account", color = colors.onPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     Icon(Icons.AutoMirrored.Filled.ArrowForward, null, tint = colors.onPrimary, modifier = Modifier.size(18.dp))
                 }
             }
