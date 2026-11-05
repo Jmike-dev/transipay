@@ -153,7 +153,11 @@ class AuthService(
 
     private fun issue(staff: StaffEntity): AuthResponse {
         val (token, ttl) = jwtService.issue(staff)
-        return AuthResponse(token, ttl, staff.id!!, staff.company.id!!, staff.role.name)
+        return AuthResponse(
+            token, ttl, staff.id!!, staff.company.id!!, staff.role.name,
+            staffName = "${staff.firstName} ${staff.lastName}",
+            companyName = staff.company.companyName,   // use your CompanyEntity's actual field name
+        )
     }
 
     private fun invalidCredentials() =
