@@ -29,7 +29,7 @@ class JwtService(private val props: AppProperties) {
             .issuedAt(now)
             .expiresAt(now.plusSeconds(ttl))
             .claim("companyId", staff.company.id.toString())
-            .claim("role", staff.role)
+            .claim("role", staff.role.name)
             .build()
         val header = JwsHeader.with(MacAlgorithm.HS256).build()
         return encoder.encode(JwtEncoderParameters.from(header, claims)).tokenValue to ttl

@@ -35,7 +35,15 @@ data class StaffRequest(
     val role: Role = Role.STAFF,
 
     val active: Boolean = true,
-)
+
+    // Optional initial password. Only used on create; ignored on update.
+    @field:Size(min = 10, max = 72)
+    @field:Schema(example = "ChangeMe12345", accessMode = Schema.AccessMode.WRITE_ONLY)
+    val password: String? = null,
+) {
+    // Keep the password out of logs
+    override fun toString() = "StaffRequest(email=$email, companyId=$companyId, role=$role)"
+}
 
 data class StaffResponse(
     val id: UUID,
