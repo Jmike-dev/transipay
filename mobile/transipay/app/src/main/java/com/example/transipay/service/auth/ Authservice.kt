@@ -18,6 +18,8 @@ data class AuthResponse(
     val staffId: String,
     val companyId: String,
     val role: String,
+    val staffName: String? = null,
+    val companyName: String? = null,
 ) {
     val roleEnum: Role get() = runCatching { Role.valueOf(role) }.getOrDefault(Role.STAFF)
 }
