@@ -11,7 +11,7 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
  * Must be the *Web application* OAuth client ID from Google Cloud Console
  * (the same one your backend uses to verify the idToken), NOT the Android client ID.
  */
-const val GOOGLE_WEB_CLIENT_ID = "YOUR_WEB_CLIENT_ID.apps.googleusercontent.com"
+const val GOOGLE_WEB_CLIENT_ID = "1063469426669-r40ghushp0kq51g2g0d5f5kccoh2ng4i.apps.googleusercontent.com"
 
 object GoogleSignInHelper {
     /** Shows the Google account picker and returns the Google idToken. */

@@ -2,7 +2,6 @@ package com.example.transipay.screen.auth
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -30,26 +29,35 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.transipay.service.auth.Role
 import com.example.transipay.ui.theme.Orange700
 import com.example.transipay.ui.theme.Slate200
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 
 @Composable
 fun SignInScreen(
     companyName: String = "Metro Shuttle Sacco Ltd",
     defaultRoute: String = "NBO - Thika Su...",
     fleetCount: String = "42 Shuttles",
-    onSignedIn: () -> Unit = {},
-    onSendMagicLink: (email: String) -> Unit = {}, // no endpoint wired yet
+    onSignedIn: (Role) -> Unit = {},
+    onSendMagicLink: (email: String) -> Unit = {},
     onContactDispatch: () -> Unit = {},
     viewModel: SignInViewModel = viewModel()
 ) {
     val colors = MaterialTheme.colorScheme
     val context = LocalContext.current
     var email by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
 
-    LaunchedEffect(viewModel.isSignedIn) {
-        if (viewModel.isSignedIn) {
-            onSignedIn()
+    LaunchedEffect(viewModel.signedInRole) {
+        val role: Role? = viewModel.signedInRole
+        if (role != null) {
+            password = "" // don't keep it around after success
+            onSignedIn(role)
             viewModel.clearSignedIn()
         }
     }
@@ -70,7 +78,7 @@ fun SignInScreen(
                 modifier = Modifier.padding(start = 4.dp)
             ) {
                 Icon(Icons.Filled.Devices, null, tint = colors.onSurfaceVariant, modifier = Modifier.size(14.dp))
-                Text("Sign In & Magic Link", color = colors.onSurfaceVariant, fontSize = 12.sp)
+                Text("Sign In", color = colors.onSurfaceVariant, fontSize = 12.sp)
             }
 
             Column(
@@ -84,86 +92,104 @@ fun SignInScreen(
                 CompanyHeader(companyName)
 
                 Spacer(Modifier.height(16.dp))
-                Row(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(50))
-                        .background(colors.tertiaryContainer)
-                        .padding(horizontal = 10.dp, vertical = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Icon(Icons.Filled.VpnKey, null, tint = colors.tertiary, modifier = Modifier.size(12.dp))
-                    Text("Zero-Password Auth", color = colors.tertiary, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
-                }
-
-                Spacer(Modifier.height(8.dp))
                 Text("Sign in to TransiPay", fontSize = 28.sp, fontWeight = FontWeight.ExtraBold, color = colors.onBackground)
-//                Spacer(Modifier.height(6.dp))
-//                Text(
-//                    "Select your preferred authentication method to access your fleet portal",
-//                    fontSize = 14.sp,
-//                    color = colors.secondary
-//                )
 
                 Spacer(Modifier.height(20.dp))
+                PasswordLoginForm(
+                    email = email,
+                    onEmailChange = { email = it },
+                    password = password,
+                    onPasswordChange = { password = it },
+                    loading = viewModel.isLoading,
+                    onSubmit = { viewModel.signInWithPassword(email, password) }
+                )
+
+                Spacer(Modifier.height(16.dp))
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    HorizontalDivider(Modifier.weight(1f))
+                    Text("or", fontSize = 12.sp, color = colors.onSurfaceVariant)
+                    HorizontalDivider(Modifier.weight(1f))
+                }
+                Spacer(Modifier.height(16.dp))
+
                 GoogleButton(
                     loading = viewModel.isLoading,
-                    onClick = {
-                        viewModel.signInWithGoogle { GoogleSignInHelper.getIdToken(context) }
-                    }
+                    onClick = { viewModel.signInWithGoogle { GoogleSignInHelper.getIdToken(context) } }
                 )
+
                 viewModel.errorMessage?.let {
                     Spacer(Modifier.height(8.dp))
                     Text(it, color = colors.error, fontSize = 12.sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
                 }
-
-                Spacer(Modifier.height(16.dp))
-//                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-//                    HorizontalDivider(modifier = Modifier.weight(1f), color = colors.outlineVariant)
-//                    Text(
-//                        "OR SIGN IN WITH EMAIL MAGIC LINK",
-//                        fontSize = 10.sp,
-//                        letterSpacing = 0.6.sp,
-//                        fontWeight = FontWeight.SemiBold,
-//                        color = colors.secondary
-//                    )
-//                    HorizontalDivider(modifier = Modifier.weight(1f), color = colors.outlineVariant)
-//                }
-//
-//                Spacer(Modifier.height(16.dp))
-//                MagicLinkCard(
-//                    email = email,
-//                    onEmailChange = { email = it },
-//                    enabled = !viewModel.isLoading,
-//                    onSend = { onSendMagicLink(email.trim()) }
-//                )
-//
-//                Spacer(Modifier.height(16.dp))
-//                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-//                    InfoTile(Icons.Filled.AltRoute, "Default Route", defaultRoute, Modifier.weight(1f))
-//                    InfoTile(Icons.Filled.DirectionsBus, "Registered Fleet", fleetCount, Modifier.weight(1f))
-//                }
-//
-//                Spacer(Modifier.height(16.dp))
-//                SecurityCard()
-//
-//                Spacer(Modifier.height(16.dp))
-//                Row(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    horizontalArrangement = Arrangement.Center,
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    Text("Need help accessing your Sacco portal?", fontSize = 12.sp, color = colors.secondary)
-//                    Spacer(Modifier.width(8.dp))
-//                    Text(
-//                        "Contact Dispatch",
-//                        fontSize = 13.sp,
-//                        fontWeight = FontWeight.Bold,
-//                        color = colors.primary,
-//                        modifier = Modifier.clickable(onClick = onContactDispatch)
-//                    )
-//                }
             }
+        }
+    }
+}
+
+@Composable
+private fun PasswordLoginForm(
+    email: String,
+    onEmailChange: (String) -> Unit,
+    password: String,
+    onPasswordChange: (String) -> Unit,
+    loading: Boolean,
+    onSubmit: () -> Unit,
+) {
+    val colors = MaterialTheme.colorScheme
+    var showPassword by rememberSaveable { mutableStateOf(false) }
+    val fieldColors = TextFieldDefaults.colors(
+        focusedContainerColor = colors.surfaceVariant,
+        unfocusedContainerColor = colors.surfaceVariant,
+        disabledContainerColor = colors.surfaceVariant,
+        focusedIndicatorColor = Color.Transparent,
+        unfocusedIndicatorColor = Color.Transparent,
+        disabledIndicatorColor = Color.Transparent,
+    )
+
+    TextField(
+        value = email,
+        onValueChange = onEmailChange,
+        placeholder = { Text("Work email") },
+        singleLine = true,
+        enabled = !loading,
+        shape = RoundedCornerShape(14.dp),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
+        colors = fieldColors,
+        modifier = Modifier.fillMaxWidth()
+    )
+    Spacer(Modifier.height(10.dp))
+    TextField(
+        value = password,
+        onValueChange = onPasswordChange,
+        placeholder = { Text("Password") },
+        singleLine = true,
+        enabled = !loading,
+        shape = RoundedCornerShape(14.dp),
+        visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+        keyboardActions = androidx.compose.foundation.text.KeyboardActions(onDone = { onSubmit() }),
+        trailingIcon = {
+            IconButton(onClick = { showPassword = !showPassword }) {
+                Icon(
+                    if (showPassword) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
+                    contentDescription = if (showPassword) "Hide password" else "Show password"
+                )
+            }
+        },
+        colors = fieldColors,
+        modifier = Modifier.fillMaxWidth()
+    )
+    Spacer(Modifier.height(14.dp))
+    Button(
+        onClick = onSubmit,
+        enabled = !loading && email.isNotBlank() && password.isNotBlank(),
+        shape = RoundedCornerShape(50),
+        modifier = Modifier.fillMaxWidth().height(52.dp)
+    ) {
+        if (loading) {
+            CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp, color = colors.onPrimary)
+        } else {
+            Text("Sign in", fontWeight = FontWeight.Bold, fontSize = 15.sp)
         }
     }
 }

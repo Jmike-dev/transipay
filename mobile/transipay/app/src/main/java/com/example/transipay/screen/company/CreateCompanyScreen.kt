@@ -43,7 +43,8 @@ private val fleetOptions = listOf(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateCompanyScreen(
-    onCompanyCreated: (companyName: String) -> Unit = {},
+    onCompanyCreated: (companyId: String, companyName: String) -> Unit = { _, _ -> },
+    onHaveAccount: () -> Unit = {},
     viewModel: CreateCompanyViewModel = viewModel()
 ) {
     val focusManager = LocalFocusManager.current
@@ -53,9 +54,10 @@ fun CreateCompanyScreen(
     var fleetIndex by rememberSaveable { mutableIntStateOf(0) }
 
     // Once the company is created, hand off to the caller (navigates to Sign In)
+
     LaunchedEffect(viewModel.createdCompany) {
         viewModel.createdCompany?.let {
-            onCompanyCreated(it.companyName)
+            onCompanyCreated(it.id, it.companyName)
             viewModel.clearCreated()
         }
     }
