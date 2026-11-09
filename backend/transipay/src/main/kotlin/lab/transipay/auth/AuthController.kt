@@ -1,5 +1,6 @@
 package lab.transipay.auth
 
+import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import lab.transipay.auth.dto.*
 import org.springframework.http.HttpStatus
@@ -8,6 +9,7 @@ import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.*
 import java.util.UUID
 
+@Tag(name = "auth", description = "auth endpoints")
 @RestController
 @RequestMapping("/auth")
 class AuthController(private val authService: AuthService) {

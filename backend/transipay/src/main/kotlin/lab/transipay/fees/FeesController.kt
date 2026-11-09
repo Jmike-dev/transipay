@@ -1,5 +1,6 @@
 package lab.transipay.fees
 
+import io.swagger.v3.oas.annotations.Hidden
 import jakarta.validation.Valid
 import lab.transipay.fees.dto.CreateFeeRequest
 import lab.transipay.fees.dto.FeeResponse
@@ -10,6 +11,7 @@ import java.util.UUID
 import io.swagger.v3.oas.annotations.tags.Tag
 
 @Tag(name = "Fees", description = "Create, update and manage fees")
+@Hidden
 @RestController
 @RequestMapping("/api/fees")
 class FeesController(
