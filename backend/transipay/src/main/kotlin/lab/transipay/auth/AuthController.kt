@@ -9,7 +9,7 @@ import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.*
 import java.util.UUID
 
-@Tag(name = "auth", description = "auth endpoints")
+@Tag(name = "auth", description = "Auth endpoints ")
 @RestController
 @RequestMapping("/auth")
 class AuthController(private val authService: AuthService) {
