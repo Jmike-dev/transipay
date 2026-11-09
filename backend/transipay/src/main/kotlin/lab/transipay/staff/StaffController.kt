@@ -8,6 +8,9 @@ import lab.transipay.staff.dto.StaffResponse
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import java.util.UUID
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.oauth2.jwt.Jwt
+
 
 @RestController
 @RequestMapping("/api/staff")
@@ -20,8 +23,9 @@ class StaffController(private val service: StaffService) {
     fun create(@Valid @RequestBody req: StaffRequest): StaffResponse = service.create(req)
 
     @GetMapping
-    @Operation(summary = "List all staff")
-    fun findAll(): List<StaffResponse> = service.findAll()
+    @Operation(summary = "List staff in my company")
+    fun findAll(@AuthenticationPrincipal jwt: Jwt): List<StaffResponse> =
+        service.findAll(UUID.fromString(jwt.getClaimAsString("companyId")))
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a staff member by id")
