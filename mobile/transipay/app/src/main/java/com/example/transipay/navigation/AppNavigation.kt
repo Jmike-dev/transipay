@@ -70,6 +70,7 @@ fun AppNavigation() {
 
         composable(Routes.HOME) {
             HomeScreen(
+                companyId = Session.companyId.orEmpty(),
                 onAddStaff = { nav.navigate(Routes.ADD_STAFF) },
                 onSignOut = {
                     Session.clear()

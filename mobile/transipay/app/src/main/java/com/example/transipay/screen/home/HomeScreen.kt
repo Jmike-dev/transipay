@@ -20,7 +20,7 @@ import com.example.transipay.screen.staff.StaffListScreen
 import com.example.transipay.screen.terminal.TerminalScreen
 
 @Composable
-fun HomeScreen(onAddStaff: () -> Unit, onSignOut: () -> Unit) {
+fun HomeScreen(onAddStaff: () -> Unit, onSignOut: () -> Unit,  companyId: String,) {
     val tabsNav = rememberNavController()
     val backStack by tabsNav.currentBackStackEntryAsState()
     val currentRoute = backStack?.destination?.route
@@ -48,7 +48,7 @@ fun HomeScreen(onAddStaff: () -> Unit, onSignOut: () -> Unit) {
         ) {
             composable(HomeTab.Fleet.route) { FleetScreen() }
             composable(HomeTab.Staff.route) { StaffListScreen(onAddStaff = onAddStaff) }
-            composable(HomeTab.Payments.route) { PaymentsScreen() }
+            composable(HomeTab.Payments.route) { PaymentsScreen(companyId = companyId) }
             composable(HomeTab.Terminal.route) { TerminalScreen() }
         }
     }

@@ -12,8 +12,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-//const val BASE_URL = "https://transipay-develop.up.railway.app"
-const val BASE_URL = "http://localhost:8080"
+const val BASE_URL = "https://transipay-develop.up.railway.app"
+//const val BASE_URL = "http://localhost:8080"
 
 sealed class ApiResult<out T> {
     data class Success<T>(val data: T) : ApiResult<T>()
