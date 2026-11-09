@@ -222,6 +222,3 @@ Top bar menu ──► Log out ──► Log in
 
 ---
 
-## License
-
-Add your license here.
