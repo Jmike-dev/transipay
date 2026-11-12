@@ -1,0 +1,72 @@
+package lab.transipay.staff.dto
+
+import io.swagger.v3.oas.annotations.media.Schema
+import jakarta.validation.constraints.Email
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Size
+import lab.transipay.staff.Role
+import lab.transipay.staff.StaffEntity
+import java.time.Instant
+import java.util.UUID
+
+data class StaffRequest(
+    @field:NotNull
+    @field:Schema(example = "3fa85f64-5717-4562-b3fc-2c963f66afa6")
+    val companyId: UUID,
+
+    @field:NotBlank @field:Size(max = 100)
+    @field:Schema(example = "Jane")
+    val firstName: String,
+
+    @field:NotBlank @field:Size(max = 100)
+    @field:Schema(example = "Wanjiku")
+    val lastName: String,
+
+    @field:NotBlank @field:Email
+    @field:Schema(example = "jane@transipay.com")
+    val email: String,
+
+    @field:Size(max = 30)
+    @field:Schema(example = "+254700000000")
+    val phone: String? = null,
+
+    @field:Schema(example = "STAFF")
+    val role: Role = Role.STAFF,
+
+    val active: Boolean = true,
+
+    // Optional initial password. Only used on create; ignored on update.
+    @field:Size(min = 10, max = 72)
+    @field:Schema(example = "ChangeMe12345", accessMode = Schema.AccessMode.WRITE_ONLY)
+    val password: String? = null,
+) {
+    // Keep the password out of logs
+    override fun toString() = "StaffRequest(email=$email, companyId=$companyId, role=$role)"
+}
+
+data class StaffResponse(
+    val id: UUID,
+    val companyId: UUID,
+    val firstName: String,
+    val lastName: String,
+    val email: String,
+    val phone: String?,
+    val role: Role,
+    val active: Boolean,
+    val createdAt: Instant,
+    val updatedAt: Instant,
+)
+
+fun StaffEntity.toResponse() = StaffResponse(
+    id = id!!,
+    companyId = company.id!!,
+    firstName = firstName,
+    lastName = lastName,
+    email = email,
+    phone = phone,
+    role = role,
+    active = active,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+)
